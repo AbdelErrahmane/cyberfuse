@@ -1,0 +1,20 @@
+__pycache__/
+.docker/
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+
+# Docker configuration files
+.docker/
+
+# .NET related files and directories
+.dotnet/
+
+# Git configuration file
+.gitconfig
+
+# VSCode settings and extensions directories
+
+.vscode/
