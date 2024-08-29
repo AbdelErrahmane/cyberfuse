@@ -18,3 +18,6 @@ pip-delete-this-directory.txt
 # VSCode settings and extensions directories
 
 .vscode/
+
+credential.txt
+.env

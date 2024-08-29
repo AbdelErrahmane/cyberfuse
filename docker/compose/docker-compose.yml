@@ -32,6 +32,7 @@ services:
     volumes:
       - ../../app:/app  # Mount the local app directory to the container
       - ../../requirements.txt:/tmp/requirements.txt
+      - ../../.env:/app/.env
     networks:
       - spark-network
 
