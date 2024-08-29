@@ -13,7 +13,7 @@ def check_misp_connexion():
     else:
         raise ValueError("MISP session not found")
 
-def get_feeds_connexion():
+async def get_feeds():
     session = get_misp_session(url,authkey)
     if "session" in session:
         response = session.get(f"{url}/feeds", verify=False)

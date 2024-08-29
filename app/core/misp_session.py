@@ -5,7 +5,6 @@ import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 def get_misp_session(url,authkey):
-    print("url***",url)
     # Set up headers for the API requests, including the authentication key
     headers = {
         'Authorization': authkey,
