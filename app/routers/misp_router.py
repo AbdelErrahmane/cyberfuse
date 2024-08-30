@@ -31,18 +31,18 @@ async def get_fetch():
 async def get_event(event_id: int):
     uri = f"events/view/{event_id}"
     print(f"Fetching event {event_id} ************")
-    # try:
-    event = await get_json_session(uri)
-    if event:
-        event_details, feed_details, org_details, orgc_details, attributes = process_events(event)
-        return {
-                "event_details": event_details.toJSON().collect(),
-                "feed_details": feed_details.toJSON().collect(),
-                "org_details": org_details.toJSON().collect(),
-                "orgc_details": orgc_details.toJSON().collect(),
-                "attributes": attributes.toJSON().collect()
-        }
-    else:
-        raise HTTPException(status_code=500, detail="Failed to fetch events")
-    # except Exception as e:
-    #     raise HTTPException(status_code=500, detail=str(e))
+    try:
+        event = await get_json_session(uri)
+        if event:
+            event_details, feed_details, org_details, orgc_details, attributes = process_events(event)
+            return {
+                    "event_details": event_details.toJSON().collect(),
+                    "feed_details": feed_details.toJSON().collect(),
+                    "org_details": org_details.toJSON().collect(),
+                    "orgc_details": orgc_details.toJSON().collect(),
+                    "attributes": attributes.toJSON().collect()
+            }
+        else:
+            raise HTTPException(status_code=500, detail="Failed to fetch events")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

@@ -136,13 +136,13 @@ def process_events(event):
 
     # Show DataFrames
     print('Event Details:')
-    event_details.show(truncate=False)
+    event_details.show(truncate=True)
 
     print('Feed Details:')
-    feed_details.show(truncate=False)
+    feed_details.show(truncate=True)
 
     print('Org Details:')
-    org_details.show(truncate=False)
+    org_details.show(truncate=True)
 
     print('Orgc Details:')
     orgc_details.show(truncate=False)
