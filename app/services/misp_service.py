@@ -55,9 +55,9 @@ def process_events(event):
     # Convert JSON response to PySpark DataFrame
     event_rdd = spark.sparkContext.parallelize([json.dumps(event)])
     event_df = spark.read.json(event_rdd)
-    event_df = event_df.repartition(10)
-
-
+    if event_df.rdd.getNumPartitions() > 10:
+        event_df = event_df.coalesce(10)
+    event_df = event_df.persist()
     # Extract Event Details
     event_details = event_df.select(
         col("Event.id").alias("id"),

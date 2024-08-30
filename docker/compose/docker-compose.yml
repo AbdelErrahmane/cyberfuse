@@ -36,8 +36,6 @@ services:
     networks:
       - spark-network
 
-
-
 networks:
   spark-network:
     driver: bridge

@@ -29,7 +29,7 @@ class Feed:
         self.feed_provider = feed_provider
         self.feed_source_format = feed_source_format
         self.feed_lookup_visible = feed_lookup_visible
-        self.feed_event_uuids = feed_event_uuids
+        self.feed_event_uuids = feed_event_uuids# This is in events get request and not in feeds get request
         self.distribution = distribution  # This is in feeds get request and not in events get request
 
 class Org:
