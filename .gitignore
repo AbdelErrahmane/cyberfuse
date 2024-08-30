@@ -21,4 +21,4 @@ pip-delete-this-directory.txt
 
 credential.txt
 
-data/
+shared/
