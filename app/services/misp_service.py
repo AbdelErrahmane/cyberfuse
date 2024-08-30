@@ -40,11 +40,11 @@ def process_feeds(feeds):
     processed_df = feeds_df.select(
         col("Feed.id").alias("id"),
         col("Feed.name").alias("name"),
-        col("Feed.provider").alias("provider"),
         col("Feed.url").alias("url"),
+        col("Feed.provider").alias("provider"),
+        col("Feed.source_format").alias("source_format"),
         col("Feed.enabled").alias("enabled"),
-        col("Feed.distribution").alias("distribution"),
-        col("Feed.source_format").alias("source_format")
+        col("Feed.distribution").alias("distribution")
     )
     print('Processed DataFrame:')
     processed_df.show()
@@ -135,16 +135,16 @@ def process_events(event):
     )
 
     # Show DataFrames
-    print('Event Details:')
+    print('==========Event Details:===============')
     event_details.show(truncate=True)
 
-    print('Feed Details:')
+    print('==============Feed Details:==============')
     feed_details.show(truncate=True)
 
-    print('Org Details:')
+    print('==============Org Details:==============')
     org_details.show(truncate=True)
 
-    print('Orgc Details:')
+    print('==============Orgc Details:==============')
     orgc_details.show(truncate=False)
 
     print('Attributes:')
