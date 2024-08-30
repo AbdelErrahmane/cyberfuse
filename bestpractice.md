@@ -138,3 +138,8 @@ and add an image of  hive ``hive:2.3.2-postgresql-metastore`` and add a volume t
 
 - **Hive**: Best suited for batch processing and ETL operations.
 - **Delta Lake**: Ideal for real-time data processing, streaming, and scenarios requiring ACID transactions.
+
+## HDFS:
+
+- **Namenode:** Manages metadata and namespace operations, critical for the functioning of HDFS.
+- **Datanode:** Stores actual data, performs read/write operations, and reports to the Namenode.
