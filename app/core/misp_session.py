@@ -15,7 +15,6 @@ def get_misp_session(url,authkey):
     # Create a session object to keep track of the authentication
     session = requests.Session()
     session.headers.update(headers)
-
     response = session.get(f"{url}/feeds", verify=False)
     if response.status_code == 200:
         print("Successfully!")  # Updated message

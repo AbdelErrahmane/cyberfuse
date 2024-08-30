@@ -7,5 +7,3 @@ app = FastAPI()
 
 app.include_router(spark_router.router)
 app.include_router(misp_router.router)
-
-

@@ -20,4 +20,3 @@ pip-delete-this-directory.txt
 .vscode/
 
 credential.txt
-.env
