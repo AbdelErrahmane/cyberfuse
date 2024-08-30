@@ -28,8 +28,8 @@ This project is a FastAPI application integrated with PySpark and MISP (Malware 
 ### Installation
 1. Clone the repository:
     ```sh
-    git clone <repository-url>
-    cd <repository-directory>
+    git clone https://github.com/AbdelErrahmane/cyberfuse.git
+    cd cyberfuse
     ```
 
 2. Create a `.env` file in the root directory with the following content:
