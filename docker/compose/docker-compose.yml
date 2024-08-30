@@ -13,6 +13,8 @@ services:
   spark-worker:
     image: bitnami/spark:3.5.2
     container_name: spark-worker
+    ports:
+      - "8081:8081" 
     env_file:
       - worker.env
     depends_on:
@@ -26,6 +28,7 @@ services:
     container_name: fastapi
     ports:
       - "8000:8000"
+      - "4040:4040"
     depends_on:
       - spark-master
       - spark-worker

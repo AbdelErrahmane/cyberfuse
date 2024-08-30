@@ -13,7 +13,7 @@ When working with big data, consider the following best practices:
 ## 2. Best Practices for Managing Big Data in FastAPI with PySpark
 
 - **Data Sampling for Large Datasets**: When the dataset is too large to return in full, consider returning a sample or a summary (e.g., descriptive statistics, counts, etc.) instead of the entire dataset.
-- **Lazy Execution and Optimization**: Take advantage of Spark's lazy execution model. Avoid triggering actions (like `.collect()`, `.show()`, `.toPandas()`) unnecessarily and ensure that transformations are pipelined effectively.
+- **Lazy Execution and Optimization**: Take advantage of Spark's lazy execution model. Avoid triggering actions (like `.collect()`, `.show()`, `.toPandas()`) unnecessarily and ensure that transformations are pipelined effectively.s
 - **Efficient Memory Management**:
   - Use `broadcast()` to send small lookup tables to all worker nodes when performing joins.
   - Use `checkpoint()` or `persist()` methods to save intermediate results that are expensive to recompute.
@@ -82,3 +82,59 @@ SPARK_CONF_spark.sql.catalogImplementation=hive
 ```
 
 and add an image of  hive ``hive:2.3.2-postgresql-metastore`` and add a volume to storage the data in ``docker-compose.yml``
+# Hive and Delta Lake
+
+## Apache Hive
+
+**Purpose**: Hive is a data warehouse infrastructure built on top of Hadoop. It allows for querying and managing large datasets residing in distributed storage using a SQL-like language called HiveQL.
+
+**Storage**: Hive stores data in Hadoop Distributed File System (HDFS) or other compatible file systems.
+
+**Schema Management**: Hive uses a metastore to store metadata about the tables, columns, partitions, and data types.
+
+**Query Language**: HiveQL, which is similar to SQL.
+
+**Data Processing**: Hive translates queries into MapReduce, Tez, or Spark jobs for execution.
+
+**Use Cases**: Batch processing, ETL (Extract, Transform, Load) operations, data summarization, and ad-hoc querying.
+
+## Delta Lake
+
+**Purpose**: Delta Lake is an open-source storage layer that brings ACID (Atomicity, Consistency, Isolation, Durability) transactions to Apache Spark and big data workloads. It enables building reliable data lakes.
+
+**Storage**: Delta Lake stores data in Parquet format on cloud storage systems like AWS S3, Azure Data Lake Storage (ADLS), or HDFS.
+
+**Schema Management**: Delta Lake supports schema enforcement and schema evolution, allowing for more flexible data management.
+
+**Query Language**: Delta Lake can be queried using Spark SQL.
+
+**Data Processing**: Delta Lake leverages Apache Spark for data processing and provides features like time travel (data versioning), upserts, and deletes.
+
+**Use Cases**: Real-time data processing, streaming data, data lakes, and scenarios requiring ACID transactions.
+
+## Key Differences
+
+### ACID Transactions
+
+- **Hive**: Does not natively support ACID transactions (though some support is available in newer versions).
+- **Delta Lake**: Provides full ACID transaction support, ensuring data reliability and consistency.
+
+### Data Format
+
+- **Hive**: Typically uses text formats like CSV, ORC, or Parquet.
+- **Delta Lake**: Uses Parquet format with additional transaction logs for ACID compliance.
+
+### Schema Management
+
+- **Hive**: Schema is defined at the table level and stored in the metastore.
+- **Delta Lake**: Supports schema enforcement and evolution, allowing for more flexible schema management.
+
+### Performance
+
+- **Hive**: Performance can be slower due to reliance on MapReduce (though newer versions can use Tez or Spark).
+- **Delta Lake**: Optimized for performance with features like data skipping, Z-order indexing, and caching.
+
+### Use Cases
+
+- **Hive**: Best suited for batch processing and ETL operations.
+- **Delta Lake**: Ideal for real-time data processing, streaming, and scenarios requiring ACID transactions.

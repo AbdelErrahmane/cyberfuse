@@ -30,7 +30,6 @@ async def get_fetch():
 @router.get("/events/view/{event_id}")
 async def get_event(event_id: int):
     uri = f"events/view/{event_id}"
-    print(f"Fetching event {event_id} ************")
     try:
         event = await get_json_session(uri)
         if event:
