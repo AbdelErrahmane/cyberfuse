@@ -92,12 +92,7 @@ requests
 urllib3
 python-dotenv
 ```
-### `.env`
-Contains environment variables for the project:
-```properties
-MISP_URL = "https://your-misp-url"
-MISP_AUTHKEY = "your-misp-authkey"
-```
+
 
 ### `worker.env`
 Configuration for the Spark worker:

@@ -4,6 +4,7 @@ import os
 import json
 from core.spark_session import get_spark_session
 from pyspark.sql.functions import col , explode
+# from models.misp_models import Event, Feed, Org
 
 
 load_dotenv()
@@ -133,6 +134,7 @@ def process_events(event):
         col("Attribute.last_seen").alias("attribute_last_seen"),
         col("Attribute.value").alias("attribute_value")
     )
+
 
     # Show DataFrames
     print('==========Event Details:===============')
