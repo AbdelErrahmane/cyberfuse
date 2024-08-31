@@ -12,6 +12,6 @@ router = APIRouter(
 async def run_job():
     return check_spark_hdfs_connection()
 
-@router.get("/statuss")
-async def run_job():
-    return read_spark_hdfs("Cisco-ASA-Syslog-sample.xlsx", True, True)
+@router.get("/read/{file_name}")
+async def run_job(file_name: str):
+    return read_spark_hdfs(file_name, True, True)
