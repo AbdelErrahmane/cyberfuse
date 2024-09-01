@@ -2,7 +2,7 @@ from core.misp_session import get_misp_session
 from dotenv import load_dotenv
 import os
 import json
-from core.spark_session import get_spark_session
+from core.spark_singleton import SparkSingleton
 from pyspark.sql.functions import col , explode
 # from models.misp_models import Event, Feed, Org
 
@@ -10,7 +10,7 @@ from pyspark.sql.functions import col , explode
 load_dotenv()
 url = os.getenv('MISP_URL')
 authkey = os.getenv('MISP_AUTHKEY')
-spark = get_spark_session()
+spark = SparkSingleton.get_instance()
 
 
 def check_misp_connexion():
@@ -49,6 +49,7 @@ def process_feeds(feeds):
     )
     print('Processed DataFrame:')
     processed_df.show()
+    
 
     return processed_df
 

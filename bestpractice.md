@@ -143,3 +143,12 @@ and add an image of  hive ``hive:2.3.2-postgresql-metastore`` and add a volume t
 
 - **Namenode:** Manages metadata and namespace operations, critical for the functioning of HDFS.
 - **Datanode:** Stores actual data, performs read/write operations, and reports to the Namenode.
+
+## Singleton Pattern Explanation
+The Singleton pattern is a design pattern that ensures a class has only one instance and provides a global point of access to that instance. This is useful when exactly one object is needed to coordinate actions across the system.
+
+### Key Characteristics of Singleton Pattern
+
+- **Single Instance:** Only one instance of the class is created.
+- **Global Access:** The single instance is globally accessible.
+- **Lazy Initialization:** The instance is created only when it is needed.

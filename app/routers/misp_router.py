@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from services.misp_service import check_misp_connexion, get_json_session,process_feeds,process_events
+from services.delta_table_service import write_spark_delta, read_spark_delta,save_or_merge_delta_table
 
 router = APIRouter(
     prefix="/misp",
@@ -16,16 +17,22 @@ async def run_job():
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/feeds")
-async def get_fetch():
+async def get_feeds_write_delta_table():
     try:
         feeds = await get_json_session("feeds")
         if feeds:
             feeds_df = process_feeds(feeds)
-            return feeds_df.toJSON().collect()
+            columns = feeds_df.columns
+            message_status = save_or_merge_delta_table(feeds_df, "misp/feeds", columns[0])
+            return message_status
         else:
            raise HTTPException(status_code=500, detail="Failed to fetch feeds")
     except Exception as e:
        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/feeds/read/")
+async def read_feeds_deltatable():
+    return read_spark_delta("misp/feeds")
 
 @router.get("/events/view/{event_id}")
 async def get_event(event_id: int):

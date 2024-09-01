@@ -2,6 +2,8 @@
 
 # Create the /data directory in HDFS
 docker exec -it hadoop-datanode hdfs dfs -mkdir -p /data
+docker exec -it hadoop-datanode hdfs dfs -mkdir -p /delta/syslog
+
 
 echo "Folder created in HDFS"
 sleep 5

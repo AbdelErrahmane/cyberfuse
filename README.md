@@ -7,7 +7,10 @@ Apache Spark is a unified analytics engine for large-scale data processing. It p
 2. **Spark Worker**: The worker nodes in a Spark cluster that execute tasks assigned by the master.
 3. **Spark Driver**: The process that runs the main() function of the application and creates the SparkContext.
 4. **Spark Executor**: The distributed agents responsible for executing tasks on the worker nodes.
-
+### Spark sangleton Class
+create a single SparkSession instance that can be used across your entire application, you can follow these steps:
+- **Create a Singleton Class for SparkSession:** This ensures that only one instance of SparkSession is created and shared across the application.
+- **Use the Singleton Class in Your Modules:** Import and use the singleton instance wherever needed.
 ## Overview (MISP)
 This project is a FastAPI application integrated with PySpark and MISP (Malware Information Sharing Platform). It provides endpoints to interact with MISP data and Spark cluster information.
 

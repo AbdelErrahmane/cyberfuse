@@ -1,7 +1,8 @@
-from core.spark_session import get_spark_session
+from core.spark_singleton import SparkSingleton
+
+spark = SparkSingleton.get_instance()
 
 def get_spark_info():
-    spark = get_spark_session()
     sc = spark.sparkContext
     app_id = sc.applicationId
     master_url = sc.master
@@ -11,7 +12,7 @@ def get_spark_info():
     default_parallelism = sc.defaultParallelism
     default_min_partitions = sc.defaultMinPartitions
     executor_memory_status = sc._jsc.sc().getExecutorMemoryStatus().toString()
-    num_workers = executor_memory_status.count('(') - 1  
+    num_workers = executor_memory_status.count('(')
     
     return {
         "message": "Welcome to the FastAPI with PySpark application!",
