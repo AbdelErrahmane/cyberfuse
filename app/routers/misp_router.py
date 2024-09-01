@@ -16,7 +16,7 @@ async def run_job():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.get("/feeds")
+@router.get("/feeds/write/")
 async def get_feeds_write_delta_table():
     try:
         feeds = await get_json_session("feeds")
