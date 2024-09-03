@@ -1,6 +1,7 @@
 from delta.tables import DeltaTable
 from core.spark_singleton import SparkSingleton
 
+
 spark = SparkSingleton.get_instance()
 
 def clean_column_names(df):
@@ -9,13 +10,13 @@ def clean_column_names(df):
         clean_name = col_name.replace(" ", "_").replace("[", "").replace("]", "").replace("(", "").replace(")", "").replace("\n", "").replace("\t", "")
         df = df.withColumnRenamed(col_name, clean_name)
     return df
+    
 
 def write_spark_delta(dataframe, table_path: str, partition_column: str,overwrite_schema=False):
     try:
         dataframe = clean_column_names(dataframe)
         dataframe.write.format("delta").mode("overwrite")\
         .option("overwriteSchema", overwrite_schema)\
-        .partitionBy(partition_column)\
         .save(f"hdfs://hadoop-namenode:8020/delta/{table_path}")
         return {"status": "Success", "details": "Data saved in Delta table in HDFS"}
     except Exception as e:
@@ -35,13 +36,12 @@ def save_or_merge_delta_table(df, delta_path, partition_column):
     delta_path = f"hdfs://hadoop-namenode:8020/delta/{delta_path}"
     # Check if the Delta table exists
     print(f"Saving or merging data into Delta table {delta_path} with partition column {partition_column}")
-    df = df.cache()
 
     df = clean_column_names(df)
+    
     if DeltaTable.isDeltaTable(spark, delta_path):
         print(f"Delta table {delta_path} exists")
         deltaTable = DeltaTable.forPath(spark, delta_path)
-
         # Check if the Delta table is empty
         if deltaTable.toDF().count() > 0:
             # If the table is not empty, perform the merge operation
@@ -60,7 +60,6 @@ def save_or_merge_delta_table(df, delta_path, partition_column):
             print(f"Appending data to Delta table {delta_path}")
             df.write.format("delta") \
                 .mode("append") \
-                .partitionBy(partition_column) \
                 .option("mergeSchema", "true") \
                 .save(delta_path)
             return {"status": "Success", "details": "Data appended to empty dataframe in Delta table in HDFS"}
@@ -69,7 +68,8 @@ def save_or_merge_delta_table(df, delta_path, partition_column):
         print(f"Creating Delta table {delta_path}")
         df.write.format("delta") \
             .mode("append") \
-            .partitionBy(partition_column) \
             .option("mergeSchema", "true") \
             .save(delta_path)
+        if  df.is_cached:
+            df = df.unpersist()
         return {"status": "Success", "details": "Data saved in Delta table in HDFS"}

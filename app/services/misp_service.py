@@ -4,6 +4,9 @@ import os
 import json
 from core.spark_singleton import SparkSingleton
 from pyspark.sql.functions import col , explode
+from services.delta_table_service import save_or_merge_delta_table
+from pyspark.storagelevel import StorageLevel
+import time
 # from models.misp_models import Event, Feed, Org
 
 
@@ -59,12 +62,13 @@ def process_events(event):
     event_df = spark.read.json(event_rdd)
     if event_df.rdd.getNumPartitions() > 10:
         event_df = event_df.coalesce(10)
-    event_df = event_df.persist()
+    event_df = event_df.persist(StorageLevel.MEMORY_AND_DISK)
     # Extract Event Details
     event_details = event_df.select(
         col("Event.id").alias("id"),
         col("Event.orgc_id").alias("orgc_id"),
         col("Event.org_id").alias("org_id"),
+        col("Event.Feed.id").alias("feed_id"),
         col("Event.date").alias("date"),
         col("Event.threat_level_id").alias("threat_level_id"),
         col("Event.info").alias("info"),
@@ -88,34 +92,34 @@ def process_events(event):
     feed_details = event_df.select(
         explode(col("Event.Feed")).alias("Feed")
     ).select(
-        col("Feed.id").alias("feed_id"),
-        col("Feed.name").alias("feed_name"),
-        col("Feed.url").alias("feed_url"),
-        col("Feed.provider").alias("feed_provider"),
-        col("Feed.source_format").alias("feed_source_format"),
-        col("Feed.lookup_visible").alias("feed_lookup_visible"),
-        col("Feed.event_uuids").alias("feed_event_uuids")
+        col("Feed.id").alias("id"),
+        col("Feed.name").alias("name"),
+        col("Feed.url").alias("url"),
+        col("Feed.provider").alias("provider"),
+        col("Feed.source_format").alias("source_format"),
+        col("Feed.lookup_visible").alias("lookup_visible"),
+        col("Feed.event_uuids").alias("event_uuids")
     )
 
 
     # Extract Org and Orgc Details
     org_details = event_df.select(
-        col("Event.Org.id").alias("org_id"),
-        col("Event.Org.name").alias("org_name"),
-        col("Event.Org.uuid").alias("org_uuid"),
-        col("Event.Org.local").alias("org_local")
+        col("Event.Org.id").alias("id"),
+        col("Event.Org.name").alias("name"),
+        col("Event.Org.uuid").alias("uuid"),
+        col("Event.Org.local").alias("local")
     )
 
     orgc_details = event_df.select(
-        col("Event.Orgc.id").alias("orgc_id"),
-        col("Event.Orgc.name").alias("orgc_name"),
-        col("Event.Orgc.uuid").alias("orgc_uuid"),
-        col("Event.Orgc.local").alias("orgc_local")
+        col("Event.Orgc.id").alias("id"),
+        col("Event.Orgc.name").alias("name"),
+        col("Event.Orgc.uuid").alias("uuid"),
+        col("Event.Orgc.local").alias("local")
     )
 
     # Extract Attributes
-    attributes = event_df.select(
-        explode(col("Event.Attribute")).alias("Attribute")
+    attributes_details = event_df.select(
+       explode(col("Event.Attribute")).alias("Attribute")
     ).select(
         col("Attribute.id").alias("attribute_id"),
         col("Attribute.type").alias("attribute_type"),
@@ -139,18 +143,29 @@ def process_events(event):
 
     # Show DataFrames
     print('==========Event Details:===============')
-    event_details.show(truncate=True)
+    event_details.show()
 
     print('==============Feed Details:==============')
-    feed_details.show(truncate=True)
+    feed_details.show()
 
     print('==============Org Details:==============')
-    org_details.show(truncate=True)
 
     print('==============Orgc Details:==============')
-    orgc_details.show(truncate=False)
 
-    print('Attributes:')
-    attributes.show(truncate=False)
+    print('==============Attributes Details:==============')
 
-    return event_details, feed_details, org_details, orgc_details, attributes
+    attributes_details = attributes_details.repartition(4)
+
+    message_status_event = save_or_merge_delta_table(event_details, "misp/events", event_details.columns[0])
+    # message_status_feed = save_or_merge_delta_table(feed_details, "misp/feeds", feed_details.columns[0])
+    message_status_org = save_or_merge_delta_table(org_details, "misp/orgs", org_details.columns[0])
+    message_status_orgc = save_or_merge_delta_table(orgc_details, "misp/orgcs", orgc_details.columns[0])
+    message_status_attributes = save_or_merge_delta_table(attributes_details, "misp/attributes", attributes_details.columns[0])
+
+    # message_status_event = ""
+    message_status_feed = " Keep the feed table as it is"
+    # message_status_org = ""
+    # message_status_orgc = ""
+    # message_status_attributes = ""
+
+    return message_status_event, message_status_feed, message_status_org, message_status_orgc, message_status_attributes

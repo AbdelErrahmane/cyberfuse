@@ -12,9 +12,9 @@ router = APIRouter(
 async def check_spark_hdfs():
     return check_spark_hdfs_connection()
 
-@router.get("/write/{deltatable}")
-async def write_syslog_deltatable(deltatable: str):
-    return write_spark_syslog(deltatable, True, True)
+@router.get("/write/{path_file}")
+async def write_syslog_deltatable(path_file: str):
+    return write_spark_syslog(path_file, True, True)
 
 @router.get("/read/{deltatable}")
 async def read_syslog_deltatable(deltatable: str):

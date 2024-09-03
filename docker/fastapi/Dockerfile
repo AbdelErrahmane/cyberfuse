@@ -1,11 +1,14 @@
 FROM python:3.12-slim
 
 # Install dependencies
-RUN apt-get update && apt-get install -y python3-pip openjdk-17-jdk-headless 
+RUN apt-get update && apt-get install -y python3-pip openjdk-17-jdk-headless wget
 
 # Set JAVA_HOME environment variable
 ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 ENV PATH=$JAVA_HOME/bin:$PATH
+
+# Download Azure Event Hubs Spark library and its dependencies
+# Download Azure Event Hubs Spark library and its dependencies
 
 # Copy application code
 COPY requirements.txt /tmp/requirements.txt
