@@ -1,5 +1,5 @@
 from pyspark.sql.functions import col, from_json, explode
-from pyspark.sql.types import StructType, StructField, StringType, IntegerType, ArrayType, TimestampType, MapType
+from pyspark.sql.types import StructType, StructField, StringType, IntegerType, BooleanType, DoubleType, TimestampType, ArrayType, MapType
 import os
 import time
 from core.spark_singleton import SparkSingleton
@@ -55,32 +55,26 @@ def start_eventhub_stream(timestamp):
                     StructField("tactics", ArrayType(StringType()), True),
                     StructField("techniques", ArrayType(StringType()), True),
                 ]), True),
-                StructField("AlertIds", ArrayType(StringType()), True),
-                StructField("BookmarkIds", ArrayType(StringType()), True),
-                StructField("Comments", ArrayType(StringType()), True),
-                StructField("CreatedTime", TimestampType(), True),
-                StructField("Description", StringType(), True),
-                StructField("FirstActivityTime", TimestampType(), True),
-                StructField("IncidentName", StringType(), True),
-                StructField("IncidentNumber", IntegerType(), True),
-                StructField("IncidentUrl", StringType(), True),
-                StructField("Labels", ArrayType(StringType()), True),
-                StructField("LastActivityTime", TimestampType(), True),
-                StructField("LastModifiedTime", TimestampType(), True),
-                StructField("ModifiedBy", StringType(), True),
-                StructField("Owner", owner_schema, True),
-                StructField("ProviderIncidentId", StringType(), True),
-                StructField("ProviderName", StringType(), True),
-                StructField("RelatedAnalyticRuleIds", ArrayType(StringType()), True),
-                StructField("Severity", StringType(), True),
-                StructField("SourceSystem", StringType(), True),
-                StructField("Status", StringType(), True),
-                StructField("Tasks", ArrayType(StringType()), True),
-                StructField("TenantId", StringType(), True),
+                StructField("Action", StringType(), True),#
                 StructField("TimeGenerated", TimestampType(), True),
-                StructField("Title", StringType(), True),
-                StructField("Type", StringType(), True),
-                StructField("_Internal_WorkspaceResourceId", StringType(), True),
+                StructField("Active", BooleanType(), True),#
+                StructField("ConfidenceScore", DoubleType(), True),#
+                StructField("Description", StringType(), True),#
+                StructField("DomainName", StringType(), True),#
+                StructField("ExternalIndicatorId", StringType(), True),#
+                StructField("FileHashType", StringType(), True),#
+                StructField("FileHashValue", StringType(), True),#
+                StructField("NetworkSourceIP", StringType(), True),#
+                StructField("SourceSystem", StringType(), True),#
+                StructField("Tags", StringType(), True),#
+                StructField("TenantId", StringType(), True),#
+                StructField("ThreatType", StringType(), True),#
+                StructField("TrafficLightProtocolLevel", StringType(), True),#
+                StructField("Type", StringType(), True),#
+                StructField("Url", StringType(), True),#
+                StructField("Owner", owner_schema, True),
+                
+
                 ])
             ))
         ])
@@ -109,8 +103,8 @@ def start_eventhub_stream(timestamp):
 
     query = eventHubDF.writeStream \
         .foreachBatch(process_batch) \
-        .option("checkpointLocation", "/path/to/checkpoint") \
+        .option("checkpointLocation", f"hdfs://hadoop-namenode:8020/delta/sentinel/checkpoint") \
         .start()
 
-    time.sleep(timestamp)  # Or manage stream processing logic
+    time.sleep(timestamp)  
     query.stop()
