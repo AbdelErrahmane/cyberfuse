@@ -200,7 +200,7 @@ echo "------------------- Puting files in HDFS finished -------------------"
 
 ### SQL Router
 - **GET /sql/query**: Runs a SQL query on the Spark cluster to read the data from DeltaLake saved in HDFS.
-
+- **GET /query/sentinel/pagination/**: Runs a paginated SQL query on the Spark cluster.
 ## Services
 
 ### Spark Service

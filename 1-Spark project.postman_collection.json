@@ -7,96 +7,183 @@
 	},
 	"item": [
 		{
-			"name": "write syslog",
-			"request": {
-				"method": "GET",
-				"header": []
-			},
-			"response": []
-		},
-		{
-			"name": "write syslog excel",
-			"request": {
-				"method": "GET",
-				"header": []
-			},
-			"response": []
-		},
-		{
-			"name": "feeds",
-			"request": {
-				"method": "GET",
-				"header": []
-			},
-			"response": []
-		},
-		{
-			"name": "view/event",
-			"request": {
-				"auth": {
-					"type": "basic",
-					"basic": [
-						{
-							"key": "username",
-							"value": "",
-							"type": "string"
-						},
-						{
-							"key": "password",
-							"value": "",
-							"type": "string"
+			"name": "Spark router",
+			"item": [
+				{
+					"name": "Spark Satus",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8000/spark/status",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"spark",
+								"status"
+							]
 						}
-					]
-				},
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "localhost:8000/misp/events/view/7",
-					"host": [
-						"localhost"
-					],
-					"port": "8000",
-					"path": [
-						"misp",
-						"events",
-						"view",
-						"7"
-					]
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "write stream",
-			"request": {
-				"method": "GET",
-				"header": []
-			},
-			"response": []
+			"name": "Syslog  router",
+			"item": [
+				{
+					"name": "Syslog Status",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "write syslog",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "write syslog excel",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "read syslog",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
 		},
 		{
-			"name": "read sentinel",
-			"request": {
-				"method": "GET",
-				"header": []
-			},
-			"response": []
+			"name": "Misp router",
+			"item": [
+				{
+					"name": "Misp Satus",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8000/misp/status",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"misp",
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Misp get and write feeds",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "misp read feeds",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "view/event (get and write in deltalake)",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8000/misp/events/view/7",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"misp",
+								"events",
+								"view",
+								"7"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		},
 		{
-			"name": "SQL",
-			"request": {
-				"method": "GET",
-				"header": []
-			},
-			"response": []
+			"name": "Sentinel  router",
+			"item": [
+				{
+					"name": "write stream",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "read sentinel",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
 		},
 		{
-			"name": "Query pagination",
-			"request": {
-				"method": "GET",
-				"header": []
-			},
-			"response": []
+			"name": "SQL router",
+			"item": [
+				{
+					"name": "SQL",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Query pagination",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }

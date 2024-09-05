@@ -12,7 +12,7 @@ def write_spark_syslog(file_name: str, header: bool, infer_schema: bool):
         df.show()
         columns = df.columns
         print(f"Columns: {columns}")
-        
+        df = df.repartition(6)
         message_status = save_or_merge_delta_table(df, "syslog", columns[0])
         # message_status = write_spark_delta(df, "syslog",columns[0])
         return message_status
