@@ -33,70 +33,7 @@ When working with big data, consider the following best practices:
 
 By following these steps and best practices, you can create a robust FastAPI application that effectively integrates with PySpark and handles big data workloads efficiently.
 
-
-## Apache Hive
-Apache Hive is not a database itself but a data warehouse infrastructure built on top of Hadoop. It provides tools to enable easy data summarization, ad-hoc querying, and analysis of large datasets stored in Hadoop-compatible file systems. Hive uses a SQL-like language called HiveQL for querying data, which gets translated into MapReduce jobs executed on the Hadoop cluster.
-
-### Key Components of Hive:
-- **Metastore**: Stores metadata about the tables, columns, partitions, and the data types. This metadata is typically stored in a relational database like MySQL, PostgreSQL, or another supported RDBMS.
-- **HiveQL**: A SQL-like query language used to interact with the data stored in Hive.
-Driver: Manages the lifecycle of a HiveQL statement as it moves through Hive.
-- **Compiler**: Compiles HiveQL into a directed acyclic graph of MapReduce jobs.
-Execution Engine: Executes the tasks produced by the compiler in proper dependency order.
-Example Use Case:
-- **Data Storage**: Store large datasets in Hadoop Distributed File System (HDFS).
-Data Processing: Use Hive to run SQL-like queries on the data stored in HDFS.
-- **Metadata Management**: Use a relational database (like MySQL or PostgreSQL) to store metadata about the data in Hive.
-
-### Hive and spark interaction:
-you can have interaction between Apache Hive and Apache Spark. Spark can read from and write to Hive tables, allowing you to leverage Hive's data warehousing capabilities alongside Spark's powerful data processing engine. This integration is commonly used in big data applications to perform complex queries and transformations on large datasets.
-
-Steps to Integrate Hive with Spark:
-- Configure Hive Metastore: Ensure that the Hive Metastore is properly configured and accessible by Spark.
-- Spark Session Configuration: Configure the Spark session to use Hive support.
-- Read from Hive: Use Spark to read data from Hive tables.
-- Write to Hive: Use Spark to write data back to Hive tables.
-
-add 
-```python
-    .config("spark.sql.warehouse.dir", "/user/hive/warehouse") \
-        .enableHiveSupport() \
-
-```
-
-add that at `master.env` file this configuration:
-```configuration
-# Hive configuration
-SPARK_CONF_spark.sql.warehouse.dir=/user/hive/warehouse
-SPARK_CONF_spark.hadoop.hive.metastore.uris=thrift://hive-metastore:9083
-SPARK_CONF_spark.sql.catalogImplementation=hive
-```
-
-
-add that at `worker.env` file this configuration:
-```configuration
-# Hive configuration
-SPARK_CONF_spark.sql.warehouse.dir=/user/hive/warehouse
-SPARK_CONF_spark.hadoop.hive.metastore.uris=thrift://hive-metastore:9083
-SPARK_CONF_spark.sql.catalogImplementation=hive
-```
-
-and add an image of  hive ``hive:2.3.2-postgresql-metastore`` and add a volume to storage the data in ``docker-compose.yml``
-# Hive and Delta Lake
-
-## Apache Hive
-
-**Purpose**: Hive is a data warehouse infrastructure built on top of Hadoop. It allows for querying and managing large datasets residing in distributed storage using a SQL-like language called HiveQL.
-
-**Storage**: Hive stores data in Hadoop Distributed File System (HDFS) or other compatible file systems.
-
-**Schema Management**: Hive uses a metastore to store metadata about the tables, columns, partitions, and data types.
-
-**Query Language**: HiveQL, which is similar to SQL.
-
-**Data Processing**: Hive translates queries into MapReduce, Tez, or Spark jobs for execution.
-
-**Use Cases**: Batch processing, ETL (Extract, Transform, Load) operations, data summarization, and ad-hoc querying.
+#  Delta Lake
 
 ## Delta Lake
 
@@ -116,27 +53,22 @@ and add an image of  hive ``hive:2.3.2-postgresql-metastore`` and add a volume t
 
 ### ACID Transactions
 
-- **Hive**: Does not natively support ACID transactions (though some support is available in newer versions).
 - **Delta Lake**: Provides full ACID transaction support, ensuring data reliability and consistency.
 
 ### Data Format
 
-- **Hive**: Typically uses text formats like CSV, ORC, or Parquet.
 - **Delta Lake**: Uses Parquet format with additional transaction logs for ACID compliance.
 
 ### Schema Management
 
-- **Hive**: Schema is defined at the table level and stored in the metastore.
 - **Delta Lake**: Supports schema enforcement and evolution, allowing for more flexible schema management.
 
 ### Performance
 
-- **Hive**: Performance can be slower due to reliance on MapReduce (though newer versions can use Tez or Spark).
 - **Delta Lake**: Optimized for performance with features like data skipping, Z-order indexing, and caching.
 
 ### Use Cases
 
-- **Hive**: Best suited for batch processing and ETL operations.
 - **Delta Lake**: Ideal for real-time data processing, streaming, and scenarios requiring ACID transactions.
 
 ## HDFS:
