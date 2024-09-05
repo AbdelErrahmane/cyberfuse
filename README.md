@@ -253,10 +253,8 @@ The `start_eventhub_stream` function starts the Event Hub stream for a specified
 The monitore the executions of the different containers of the application
 
 ### Spark
-The execution of spark Jobs, and all execution in spark port 4040
-
-Spark master port 8080
-
-Spark workers port 8081
+- **The execution of spark Jobs, and all execution in spark port:** 4040
+- **Spark master port:** 8080
+- **Spark workers port:** 8081
 ### HDFS
-HDFS port 9864
+- **HDFS port:** 9864
