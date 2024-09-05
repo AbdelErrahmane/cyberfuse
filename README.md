@@ -4,6 +4,10 @@
 
 ![Alt text](architecture.png)
 
+## Project Description
+
+This project is a FastAPI application integrated with Apache Spark, MISP (Malware Information Sharing Platform), and Microsoft Sentinel. It provides a unified platform for ingesting and processing security data from various sources. The application leverages Spark for large-scale data processing and Delta Lake for efficient data storage and management. It also integrates with Azure Event Hub to stream data from Microsoft Sentinel, enabling real-time security analytics and threat intelligence.
+
 ## Docker Compose
 
 The project uses Docker Compose to set up and manage the following services:
