@@ -1,5 +1,9 @@
 # Documentation of Cyberfuse Project
 
+## Project Architecture
+
+![Alt text](architecture.png)
+
 ## Docker Compose
 
 The project uses Docker Compose to set up and manage the following services:
