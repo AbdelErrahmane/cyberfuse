@@ -71,15 +71,8 @@ Microsoft Sentinel is a scalable, cloud-native, security information event manag
     cd cyberfuse
     ```
 
-2. Create a `.env` file in the root directory with the following content:
-    ```properties
-    MISP_URL = "https://20.163.172.52"
-    MISP_AUTHKEY = "CpDKf7gwzK97je8sBAElEfj8gy1jPnIFtSSH6MTw"
-    AZURE_STORAGE_ACCOUNT_NAME=cyberfusedata
-    AZURE_STORAGE_ACCOUNT_ACCESS_KEY=a0RvQLygrqwMhqNgmsx0FLEVCCO11/PipDnD9raF1uYvvqekCTdTt7/9mAbCladqxD5x0zFN6cP1+AStMINjMg==
-    EVENTHUB_CONNECTION_STRING=Endpoint=sb://cyberfuseeventhubsentinel.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=3AKvcYSrGvOx5sq68goV1bggCQPobrbsz+AEhHXZD5Q=;EntityPath=cyberfusesentinelhub
-    EVENTHUB_CONSUMER_GROUP=$Default
-    ```
+2. Create a `.env` file in the root directory (it s already created)
+
 
 3. Build and run the Docker containers:
     ```sh
@@ -109,6 +102,28 @@ delta-spark==3.2.0
 ```
 
 
+#### `master.env`
+Configuration for the Spark master:
+
+```properties
+SPARK_MODE=master
+SPARK_MASTER_HOST=spark-master
+SPARK_MASTER_PORT=7077
+SPARK_MASTER_WEBUI_PORT=8080
+# New configuration settings
+SPARK_CONF_spark_serializer=org.apache.spark.serializer.KryoSerializer
+SPARK_CONF_spark_kryoserializer_buffer_max=2000m
+SPARK_CONF_spark_driver_maxResultSize=2g
+SPARK_CONF_spark_rpc_message_maxSize=2000
+SPARK_CONF_spark_task_maxFailures=10
+SPARK_CONF_spark_executor_memory=4g
+SPARK_CONF_spark_driver_memory=6g
+# HDFS Configuration
+SPARK_CONF_spark_hadoop_fs_defaultFS=hdfs://hadoop-namenode:8020
+CLUSTER_NAME=cyberfuse-hadoop-cluster
+
+```
+
 #### `worker.env`
 Configuration for the Spark worker:
 ```properties
@@ -131,27 +146,6 @@ CLUSTER_NAME=cyberfuse-hadoop-cluster
 
 ```
 
-#### `master.env`
-Configuration for the Spark master:
-
-```properties
-SPARK_MODE=master
-SPARK_MASTER_HOST=spark-master
-SPARK_MASTER_PORT=7077
-SPARK_MASTER_WEBUI_PORT=8080
-# New configuration settings
-SPARK_CONF_spark_serializer=org.apache.spark.serializer.KryoSerializer
-SPARK_CONF_spark_kryoserializer_buffer_max=2000m
-SPARK_CONF_spark_driver_maxResultSize=2g
-SPARK_CONF_spark_rpc_message_maxSize=2000
-SPARK_CONF_spark_task_maxFailures=10
-SPARK_CONF_spark_executor_memory=4g
-SPARK_CONF_spark_driver_memory=6g
-# HDFS Configuration
-SPARK_CONF_spark_hadoop_fs_defaultFS=hdfs://hadoop-namenode:8020
-CLUSTER_NAME=cyberfuse-hadoop-cluster
-
-```
 By using Docker Compose, you can easily manage and scale the services required for your application. The configuration ensures that all components work together seamlessly, providing a robust environment for data processing and analysis.
 ## Docker Setup
 The project uses Docker Compose to set up the following services:
@@ -176,15 +170,11 @@ Create a /shared folder and run /setup_hdfs.sh to put the data to HDFS:
 # Create the /data directory in HDFS
 docker exec -it hadoop-datanode hdfs dfs -mkdir -p /data
 docker exec -it hadoop-datanode hdfs dfs -mkdir -p /delta/syslog
-
-
 echo "Folder created in HDFS"
 sleep 5
-
 echo "------------------- Puting files in HDFS started -------------------"
 # Copy files from /shared to /data in HDFS
 docker exec -it hadoop-datanode hdfs dfs -put /shared/* /data/
-
 echo "------------------- Puting files in HDFS finished -------------------"
 ```
 
@@ -195,21 +185,21 @@ echo "------------------- Puting files in HDFS finished -------------------"
 
 ### MISP Router
 - **GET /misp/status**: Checks the connection to the MISP instance.
-- **GET /misp/feeds**: Fetches and processes MISP feeds.
+- **GET /misp/feeds**: Fetches and processes MISP feeds and write feeds dataframe in DeltaLake in HDFS.
 - **GET /misp/feeds/read**: Reads the MISP feeds Delta table.
-- **GET /misp/events/view/{event_id}**: Fetches and processes a specific MISP event by ID.
+- **GET /misp/events/view/{event_id}**: Fetches and processes a specific MISP event by ID and write the different pyspark dataframes: event_details; org_details; orgc_details; and attributes in DeltaLake in HDFS.
 
 ### Sentinel Router
-- **POST /sentinel/startstream/{timestamp}**: Starts the Event Hub stream for a specified duration.
-- **GET /sentinel/read/{deltatable}**: Reads a specified Delta table from the Sentinel data.
+- **POST /sentinel/startstream/{timestamp}**: Starts the Event Hub stream for a specified duration and write the different sentinel dataframes in DeltaLake in HDFS.
+- **GET /sentinel/read/{deltatable}**: Reads a specified Delta table from the Sentinel data from HDFS.
 
 ### Syslog Router
 - **GET /syslog/status**: Checks the connection to Spark and HDFS.
-- **GET /syslog/write/{path_file}**: Writes syslog data to a Delta table.
-- **GET /syslog/read/{deltatable}**: Reads a specified Delta table from the syslog data.
+- **GET /syslog/write/{path_file}**: Get data from the saved folder putting in HDFS from shared , read them in pyspark dataframe and writes syslog data to a Delta table.
+- **GET /syslog/read/{deltatable}**: Reads a specified Delta table from the syslog data saved in HDFS.
 
 ### SQL Router
-- **GET /sql/query**: Runs a SQL query on the Spark cluster.
+- **GET /sql/query**: Runs a SQL query on the Spark cluster to read the data from DeltaLake saved in HDFS.
 
 ## Services
 
@@ -218,9 +208,9 @@ echo "------------------- Puting files in HDFS finished -------------------"
 
 ### MISP Service
 - **check_misp_connexion**: Checks the connection to the MISP instance.
-- **get_json_session**: Retrieves JSON data from the MISP instance.
-- **process_feeds**: Processes MISP feeds into a PySpark DataFrame.
-- **process_events**: Processes MISP events into a PySpark DataFrame.
+- **get_json_session**: Retrieves JSON data from the MISP instance Deployed in Azure.
+- **process_feeds**: Processes MISP feeds into a PySpark DataFrame and Save them or merge them in Deltable saved in HDFS.
+- **process_events**: Processes MISP events into a PySpark DataFrame and Save them or merge them in Deltable saved in HDFS.
 
 ### Sentinel Service
 - **start_eventhub_stream**: Starts the Event Hub stream for a specified duration and processes the data.
@@ -258,3 +248,15 @@ The monitore the executions of the different containers of the application
 - **Spark workers port:** 8081
 ### HDFS
 - **HDFS port:** 9864
+
+
+## DeltaLake path in HDFS
+
+- **SYSLOG** : /delta/syslog
+
+- **MISP attributes** : /delta/misp/attributes
+- **MISP events** : /delta/misp/events
+- **MISP feeds** : /delta/misp/feeds
+- **MISP orgcs** : /delta/misp/orgcs
+- **MISP orgs** : /delta/misp/orgs
+- **Sentinel** /delta/sentinel/{name_of_table as folder}
