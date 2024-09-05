@@ -1,4 +1,82 @@
 # Documentation of Cyberfuse Project
+
+## Docker Compose
+
+The project uses Docker Compose to set up and manage the following services:
+
+- **spark-master**: The Spark master node that manages the cluster resources and schedules the execution of applications.
+- **spark-worker**: The Spark worker nodes that execute tasks assigned by the master.
+- **fastapi**: The FastAPI application that provides the API endpoints for interacting with the Spark cluster and other services.
+- **hadoop-namenode**: The Hadoop NameNode service that manages the HDFS namespace and regulates access to files by clients.
+- **hadoop-datanode**: The Hadoop DataNode service that stores the actual data in HDFS.
+
+### Key Configuration Points
+
+- **Ports**: Each service exposes specific ports to allow communication and access. For example, the FastAPI application exposes ports 8000 and 4040, while the Hadoop NameNode exposes port 9870.
+- **Dependencies**: Services are configured to depend on each other to ensure they start in the correct order. For example, the FastAPI service depends on the Spark master and worker nodes.
+- **Volumes**: Local directories are mounted into the containers to persist data and share configuration files. For example, the local `app` directory is mounted into the FastAPI container.
+- **Networks**: All services are connected to a custom Docker network to enable communication between them.
+
+### Configuration Files
+
+#### `requirements.txt`
+Lists the Python dependencies for the project:
+```plaintext
+fastapi>=0.95.0
+uvicorn>=0.22.0
+pyspark==3.5.2
+requests
+urllib3
+python-dotenv
+delta-spark==3.2.0
+```
+
+
+#### `worker.env`
+Configuration for the Spark worker:
+```properties
+SPARK_MODE=worker
+SPARK_MASTER=spark://spark-master:7077
+SPARK_WORKER_CORES=3
+SPARK_WORKER_MEMORY=3G
+SPARK_WORKER_PORT=7078
+SPARK_WORKER_WEBUI_PORT=8081
+# New configuration settings
+SPARK_CONF_spark_serializer=org.apache.spark.serializer.KryoSerializer
+SPARK_CONF_spark_kryoserializer_buffer_max=2000m
+SPARK_CONF_spark_driver_maxResultSize=2g
+SPARK_CONF_spark_rpc_message_maxSize=2000
+SPARK_CONF_spark_task_maxFailures=10
+SPARK_CONF_spark_executor_memory=4g
+SPARK_CONF_spark_driver_memory=6g
+# cluser Node
+CLUSTER_NAME=cyberfuse-hadoop-cluster
+
+```
+
+#### `master.env`
+Configuration for the Spark master:
+
+```properties
+SPARK_MODE=master
+SPARK_MASTER_HOST=spark-master
+SPARK_MASTER_PORT=7077
+SPARK_MASTER_WEBUI_PORT=8080
+# New configuration settings
+SPARK_CONF_spark_serializer=org.apache.spark.serializer.KryoSerializer
+SPARK_CONF_spark_kryoserializer_buffer_max=2000m
+SPARK_CONF_spark_driver_maxResultSize=2g
+SPARK_CONF_spark_rpc_message_maxSize=2000
+SPARK_CONF_spark_task_maxFailures=10
+SPARK_CONF_spark_executor_memory=4g
+SPARK_CONF_spark_driver_memory=6g
+# HDFS Configuration
+SPARK_CONF_spark_hadoop_fs_defaultFS=hdfs://hadoop-namenode:8020
+CLUSTER_NAME=cyberfuse-hadoop-cluster
+
+```
+By using Docker Compose, you can easily manage and scale the services required for your application. The configuration ensures that all components work together seamlessly, providing a robust environment for data processing and analysis.
+
 ## Overview (Spark)
 Apache Spark is a unified analytics engine for large-scale data processing. It provides high-level APIs in Java, Scala, Python, and R, and an optimized engine that supports general execution graphs. Spark is known for its speed, ease of use, and sophisticated analytics.
 
@@ -13,6 +91,13 @@ create a single SparkSession instance that can be used across your entire applic
 - **Use the Singleton Class in Your Modules:** Import and use the singleton instance wherever needed.
 ## Overview (MISP)
 This project is a FastAPI application integrated with PySpark and MISP (Malware Information Sharing Platform). It provides endpoints to interact with MISP data and Spark cluster information.
+
+## Overview (Syslog)
+Syslog is a standard protocol used to send system log or event messages to a specific server, called a syslog server. It is primarily used for computer system management and security auditing. In this project, syslog data is ingested, processed, and stored in Delta tables using Spark.
+
+## Overview (Microsoft Sentinel with Event Hub)
+Microsoft Sentinel is a scalable, cloud-native, security information event management (SIEM) and security orchestration automated response (SOAR) solution. It delivers intelligent security analytics and threat intelligence across the enterprise. In this project, Microsoft Sentinel data is ingested through Azure Event Hub, processed using Spark, and stored in Delta tables for further analysis.
+
 
 ## Table of Contents
 1. [Setup Instructions](#setup-instructions)
@@ -37,8 +122,12 @@ This project is a FastAPI application integrated with PySpark and MISP (Malware 
 
 2. Create a `.env` file in the root directory with the following content:
     ```properties
-    MISP_URL = "https://your-misp-url"
-    MISP_AUTHKEY = "your-misp-authkey"
+    MISP_URL = "https://20.163.172.52"
+    MISP_AUTHKEY = "CpDKf7gwzK97je8sBAElEfj8gy1jPnIFtSSH6MTw"
+    AZURE_STORAGE_ACCOUNT_NAME=cyberfusedata
+    AZURE_STORAGE_ACCOUNT_ACCESS_KEY=a0RvQLygrqwMhqNgmsx0FLEVCCO11/PipDnD9raF1uYvvqekCTdTt7/9mAbCladqxD5x0zFN6cP1+AStMINjMg==
+    EVENTHUB_CONNECTION_STRING=Endpoint=sb://cyberfuseeventhubsentinel.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=3AKvcYSrGvOx5sq68goV1bggCQPobrbsz+AEhHXZD5Q=;EntityPath=cyberfusesentinelhub
+    EVENTHUB_CONSUMER_GROUP=$Default
     ```
 
 3. Build and run the Docker containers:
@@ -49,18 +138,45 @@ This project is a FastAPI application integrated with PySpark and MISP (Malware 
 ## Environment Variables
 - **MISP_URL**: The URL of the MISP instance.
 - **MISP_AUTHKEY**: The authentication key for the MISP instance.
+- **AZURE_STORAGE_ACCOUNT_NAME:** The name of the Azure Storage account.
+- **AZURE_STORAGE_ACCOUNT_ACCESS_KEY:** The access key for the Azure Storage account.
+- **EVENTHUB_CONNECTION_STRING:** The connection string for the Azure Event Hub.
+- **EVENTHUB_CONSUMER_GROUP:** The consumer group for the Azure Event Hub.
 
 ## Docker Setup
 The project uses Docker Compose to set up the following services:
 - **spark-master**: The Spark master node.
 - **spark-worker**: The Spark worker node.
 - **fastapi**: The FastAPI application.
+- **namenode**: The namenode of HDFS.
+- **datanode**: The datanode of HDFS.
 
 ### Docker Compose Configuration
 The `docker-compose.yml` file defines the services and their configurations.
 
 ### Dockerfile
 The `Dockerfile` sets up the FastAPI application environment.
+### put the syslog files in HDFS
+
+Create a /shared folder and run /setup_hdfs.sh to put the data to HDFS:
+
+```sh
+#!/bin/bash
+
+# Create the /data directory in HDFS
+docker exec -it hadoop-datanode hdfs dfs -mkdir -p /data
+docker exec -it hadoop-datanode hdfs dfs -mkdir -p /delta/syslog
+
+
+echo "Folder created in HDFS"
+sleep 5
+
+echo "------------------- Puting files in HDFS started -------------------"
+# Copy files from /shared to /data in HDFS
+docker exec -it hadoop-datanode hdfs dfs -put /shared/* /data/
+
+echo "------------------- Puting files in HDFS finished -------------------"
+```
 
 ## API Endpoints
 
@@ -108,65 +224,17 @@ The `Dockerfile` sets up the FastAPI application environment.
 - **write_spark_delta**: Writes a DataFrame to a Delta table in HDFS.
 - **read_spark_delta**: Reads a Delta table from HDFS.
 - **save_or_merge_delta_table**: Saves or merges data into a Delta table in HDFS.
+## core package
 
-## Configuration Files
+### Spark Singleton
+The `SparkSingleton` class ensures that only one instance of `SparkSession` is created and shared across the application. This is useful for managing resources efficiently and avoiding multiple Spark contexts.
 
-### `requirements.txt`
-Lists the Python dependencies for the project:
-```plaintext
-fastapi>=0.95.0
-uvicorn>=0.22.0
-pyspark==3.5.2
-requests
-urllib3
-python-dotenv
-delta-spark==3.2.0
-```
+### MISP Session
+The `get_misp_session` function sets up a session with the MISP instance using the provided URL and authentication key. It returns a session object that can be used for subsequent API requests.
 
+### HDFS Session
+The `check_spark_hdfs_connection` function checks the connection to HDFS by attempting to read a CSV file from HDFS using Spark. It returns the status of the connection and the number of rows read from the file.
 
-### `worker.env`
-Configuration for the Spark worker:
-```properties
-SPARK_MODE=worker
-SPARK_MASTER=spark://spark-master:7077
-SPARK_WORKER_CORES=3
-SPARK_WORKER_MEMORY=3G
-SPARK_WORKER_PORT=7078
-SPARK_WORKER_WEBUI_PORT=8081
-# New configuration settings
-SPARK_CONF_spark_serializer=org.apache.spark.serializer.KryoSerializer
-SPARK_CONF_spark_kryoserializer_buffer_max=2000m
-SPARK_CONF_spark_driver_maxResultSize=2g
-SPARK_CONF_spark_rpc_message_maxSize=2000
-SPARK_CONF_spark_task_maxFailures=10
-SPARK_CONF_spark_executor_memory=4g
-SPARK_CONF_spark_driver_memory=6g
-# cluser Node
-CLUSTER_NAME=cyberfuse-hadoop-cluster
-# Hive configuration
-# SPARK_CONF_spark.sql.warehouse.dir=/user/hive/warehouse
-# SPARK_CONF_spark.hadoop.hive.metastore.uris=thrift://hive-metastore:9083
-# SPARK_CONF_spark.sql.catalogImplementation=hive
-```
+### Sentinel Session
+The `start_eventhub_stream` function starts the Event Hub stream for a specified duration and processes the data.
 
-### `master.env`
-Configuration for the Spark master:
-
-```properties
-SPARK_MODE=master
-SPARK_MASTER_HOST=spark-master
-SPARK_MASTER_PORT=7077
-SPARK_MASTER_WEBUI_PORT=8080
-# New configuration settings
-SPARK_CONF_spark_serializer=org.apache.spark.serializer.KryoSerializer
-SPARK_CONF_spark_kryoserializer_buffer_max=2000m
-SPARK_CONF_spark_driver_maxResultSize=2g
-SPARK_CONF_spark_rpc_message_maxSize=2000
-SPARK_CONF_spark_task_maxFailures=10
-SPARK_CONF_spark_executor_memory=4g
-SPARK_CONF_spark_driver_memory=6g
-# HDFS Configuration
-SPARK_CONF_spark_hadoop_fs_defaultFS=hdfs://hadoop-namenode:8020
-CLUSTER_NAME=cyberfuse-hadoop-cluster
-
-```

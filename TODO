@@ -1,0 +1,4 @@
+Columns: ['TenantId', 'SourceSystem', 'TimeGenerated [Abu Dhabi, Muscat]', 'Computer', 'EventTime [Abu Dhabi, Muscat]', 'Facility', 'HostName', 'SeverityLevel', 'SyslogMessage', 'ProcessID', 'HostIP', 'ProcessName', 'MG', 'CollectorHostName', 'Type', '_ResourceId']
+
+
+Columns: ['TenantId', 'SourceSystem', 'TimeGenerated [UTC]', 'Computer', 'EventTime [UTC]', 'Facility', 'HostName', 'SeverityLevel', 'SyslogMessage', 'ProcessID', 'HostIP', 'ProcessName', 'MG', 'CollectorHostName', 'Type', '_ResourceId']

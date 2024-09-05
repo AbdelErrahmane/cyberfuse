@@ -1,8 +1,20 @@
 from delta.tables import DeltaTable
 from core.spark_singleton import SparkSingleton
-
+from pyspark.sql.functions import to_utc_timestamp
 
 spark = SparkSingleton.get_instance()
+
+def rename_and_convert_time_columns(df):
+    # Convert the time columns from 'Abu Dhabi, Muscat' time zone to UTC
+    try:
+        df = df.withColumn('TimeGenerated [Abu Dhabi, Muscat]', to_utc_timestamp(df['TimeGenerated [Abu Dhabi, Muscat]'], 'Asia/Muscat'))
+        df = df.withColumn('EventTime [Abu Dhabi, Muscat]', to_utc_timestamp(df['EventTime [Abu Dhabi, Muscat]'], 'Asia/Muscat'))
+        df = df.withColumnRenamed('TimeGenerated [Abu Dhabi, Muscat]', 'TimeGenerated [UTC]')
+        df = df.withColumnRenamed('EventTime [Abu Dhabi, Muscat]', 'EventTime [UTC]')
+    except Exception as e:
+        print(f"Error converting time columns: {str(e)}")
+    
+    return df
 
 def clean_column_names(df):
     for col_name in df.columns:
@@ -36,8 +48,10 @@ def save_or_merge_delta_table(df, delta_path, partition_column):
     delta_path = f"hdfs://hadoop-namenode:8020/delta/{delta_path}"
     # Check if the Delta table exists
     print(f"Saving or merging data into Delta table {delta_path} with partition column {partition_column}")
-
+    df = rename_and_convert_time_columns(df)
     df = clean_column_names(df)
+    columns = df.columns
+    print("columns after cleaning: ", columns)
     
     if DeltaTable.isDeltaTable(spark, delta_path):
         print(f"Delta table {delta_path} exists")
