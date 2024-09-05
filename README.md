@@ -33,6 +33,7 @@ The project uses Docker Compose to set up and manage the following services:
 5. [Docker Setup](#docker-setup)
 6. [API Endpoints](#api-endpoints)
 7. [Services](#services)
+8. [Spark monitoring](#spark-monitoring)
 
 ## Overview 
 ### Spark
@@ -55,8 +56,6 @@ Syslog is a standard protocol used to send system log or event messages to a spe
 
 ### Microsoft Sentinel with Event Hub
 Microsoft Sentinel is a scalable, cloud-native, security information event management (SIEM) and security orchestration automated response (SOAR) solution. It delivers intelligent security analytics and threat intelligence across the enterprise. In this project, Microsoft Sentinel data is ingested through Azure Event Hub, processed using Spark, and stored in Delta tables for further analysis.
-
-
 
 
 ## Setup Instructions
@@ -249,3 +248,12 @@ The `check_spark_hdfs_connection` function checks the connection to HDFS by atte
 ### Sentinel Session
 The `start_eventhub_stream` function starts the Event Hub stream for a specified duration and processes the data.
 
+## Spark monitoring
+
+The monitore the executions of the different containers of the application
+### Spark
+The execution of spark Jobs, and all execution in spark port 4040
+Spark master port 8080
+Spark workers port 8081
+### HDFS
+HDFS port 9864
