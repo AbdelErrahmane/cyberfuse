@@ -21,65 +21,7 @@ The project uses Docker Compose to set up and manage the following services:
 - **Volumes**: Local directories are mounted into the containers to persist data and share configuration files. For example, the local `app` directory is mounted into the FastAPI container.
 - **Networks**: All services are connected to a custom Docker network to enable communication between them.
 
-### Configuration Files
 
-#### `requirements.txt`
-Lists the Python dependencies for the project:
-```plaintext
-fastapi>=0.95.0
-uvicorn>=0.22.0
-pyspark==3.5.2
-requests
-urllib3
-python-dotenv
-delta-spark==3.2.0
-```
-
-
-#### `worker.env`
-Configuration for the Spark worker:
-```properties
-SPARK_MODE=worker
-SPARK_MASTER=spark://spark-master:7077
-SPARK_WORKER_CORES=3
-SPARK_WORKER_MEMORY=3G
-SPARK_WORKER_PORT=7078
-SPARK_WORKER_WEBUI_PORT=8081
-# New configuration settings
-SPARK_CONF_spark_serializer=org.apache.spark.serializer.KryoSerializer
-SPARK_CONF_spark_kryoserializer_buffer_max=2000m
-SPARK_CONF_spark_driver_maxResultSize=2g
-SPARK_CONF_spark_rpc_message_maxSize=2000
-SPARK_CONF_spark_task_maxFailures=10
-SPARK_CONF_spark_executor_memory=4g
-SPARK_CONF_spark_driver_memory=6g
-# cluser Node
-CLUSTER_NAME=cyberfuse-hadoop-cluster
-
-```
-
-#### `master.env`
-Configuration for the Spark master:
-
-```properties
-SPARK_MODE=master
-SPARK_MASTER_HOST=spark-master
-SPARK_MASTER_PORT=7077
-SPARK_MASTER_WEBUI_PORT=8080
-# New configuration settings
-SPARK_CONF_spark_serializer=org.apache.spark.serializer.KryoSerializer
-SPARK_CONF_spark_kryoserializer_buffer_max=2000m
-SPARK_CONF_spark_driver_maxResultSize=2g
-SPARK_CONF_spark_rpc_message_maxSize=2000
-SPARK_CONF_spark_task_maxFailures=10
-SPARK_CONF_spark_executor_memory=4g
-SPARK_CONF_spark_driver_memory=6g
-# HDFS Configuration
-SPARK_CONF_spark_hadoop_fs_defaultFS=hdfs://hadoop-namenode:8020
-CLUSTER_NAME=cyberfuse-hadoop-cluster
-
-```
-By using Docker Compose, you can easily manage and scale the services required for your application. The configuration ensures that all components work together seamlessly, providing a robust environment for data processing and analysis.
 
 ## Overview (Spark)
 Apache Spark is a unified analytics engine for large-scale data processing. It provides high-level APIs in Java, Scala, Python, and R, and an optimized engine that supports general execution graphs. Spark is known for its speed, ease of use, and sophisticated analytics.
@@ -242,3 +184,62 @@ The `check_spark_hdfs_connection` function checks the connection to HDFS by atte
 ### Sentinel Session
 The `start_eventhub_stream` function starts the Event Hub stream for a specified duration and processes the data.
 
+### Configuration Files
+
+#### `requirements.txt`
+Lists the Python dependencies for the project:
+```plaintext
+fastapi>=0.95.0
+uvicorn>=0.22.0
+pyspark==3.5.2
+requests
+urllib3
+python-dotenv
+delta-spark==3.2.0
+```
+
+
+#### `worker.env`
+Configuration for the Spark worker:
+```properties
+SPARK_MODE=worker
+SPARK_MASTER=spark://spark-master:7077
+SPARK_WORKER_CORES=3
+SPARK_WORKER_MEMORY=3G
+SPARK_WORKER_PORT=7078
+SPARK_WORKER_WEBUI_PORT=8081
+# New configuration settings
+SPARK_CONF_spark_serializer=org.apache.spark.serializer.KryoSerializer
+SPARK_CONF_spark_kryoserializer_buffer_max=2000m
+SPARK_CONF_spark_driver_maxResultSize=2g
+SPARK_CONF_spark_rpc_message_maxSize=2000
+SPARK_CONF_spark_task_maxFailures=10
+SPARK_CONF_spark_executor_memory=4g
+SPARK_CONF_spark_driver_memory=6g
+# cluser Node
+CLUSTER_NAME=cyberfuse-hadoop-cluster
+
+```
+
+#### `master.env`
+Configuration for the Spark master:
+
+```properties
+SPARK_MODE=master
+SPARK_MASTER_HOST=spark-master
+SPARK_MASTER_PORT=7077
+SPARK_MASTER_WEBUI_PORT=8080
+# New configuration settings
+SPARK_CONF_spark_serializer=org.apache.spark.serializer.KryoSerializer
+SPARK_CONF_spark_kryoserializer_buffer_max=2000m
+SPARK_CONF_spark_driver_maxResultSize=2g
+SPARK_CONF_spark_rpc_message_maxSize=2000
+SPARK_CONF_spark_task_maxFailures=10
+SPARK_CONF_spark_executor_memory=4g
+SPARK_CONF_spark_driver_memory=6g
+# HDFS Configuration
+SPARK_CONF_spark_hadoop_fs_defaultFS=hdfs://hadoop-namenode:8020
+CLUSTER_NAME=cyberfuse-hadoop-cluster
+
+```
+By using Docker Compose, you can easily manage and scale the services required for your application. The configuration ensures that all components work together seamlessly, providing a robust environment for data processing and analysis.
