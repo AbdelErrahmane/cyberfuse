@@ -25,10 +25,10 @@ The project uses Docker Compose to set up and manage the following services:
 1. [Overviews](#overview)
 2. [Setup Instructions](#setup-instructions)
 3. [Environment Variables](#environment-variables)
-4. [Docker Setup](#docker-setup)
-5. [API Endpoints](#api-endpoints)
-6. [Services](#services)
-7. [Configuration Files](#configuration-files)
+4. [Configuration Files](#configuration-files)
+5. [Docker Setup](#docker-setup)
+6. [API Endpoints](#api-endpoints)
+7. [Services](#services)
 
 ## Overview 
 ### Spark
@@ -83,7 +83,7 @@ Microsoft Sentinel is a scalable, cloud-native, security information event manag
     docker-compose up --build
     ```
 
-## Environment Variables
+### Environment Variables
 - **MISP_URL**: The URL of the MISP instance.
 - **MISP_AUTHKEY**: The authentication key for the MISP instance.
 - **AZURE_STORAGE_ACCOUNT_NAME:** The name of the Azure Storage account.
@@ -91,6 +91,65 @@ Microsoft Sentinel is a scalable, cloud-native, security information event manag
 - **EVENTHUB_CONNECTION_STRING:** The connection string for the Azure Event Hub.
 - **EVENTHUB_CONSUMER_GROUP:** The consumer group for the Azure Event Hub.
 
+### Configuration Files
+
+#### `requirements.txt`
+Lists the Python dependencies for the project:
+```plaintext
+fastapi>=0.95.0
+uvicorn>=0.22.0
+pyspark==3.5.2
+requests
+urllib3
+python-dotenv
+delta-spark==3.2.0
+```
+
+
+#### `worker.env`
+Configuration for the Spark worker:
+```properties
+SPARK_MODE=worker
+SPARK_MASTER=spark://spark-master:7077
+SPARK_WORKER_CORES=3
+SPARK_WORKER_MEMORY=3G
+SPARK_WORKER_PORT=7078
+SPARK_WORKER_WEBUI_PORT=8081
+# New configuration settings
+SPARK_CONF_spark_serializer=org.apache.spark.serializer.KryoSerializer
+SPARK_CONF_spark_kryoserializer_buffer_max=2000m
+SPARK_CONF_spark_driver_maxResultSize=2g
+SPARK_CONF_spark_rpc_message_maxSize=2000
+SPARK_CONF_spark_task_maxFailures=10
+SPARK_CONF_spark_executor_memory=4g
+SPARK_CONF_spark_driver_memory=6g
+# cluser Node
+CLUSTER_NAME=cyberfuse-hadoop-cluster
+
+```
+
+#### `master.env`
+Configuration for the Spark master:
+
+```properties
+SPARK_MODE=master
+SPARK_MASTER_HOST=spark-master
+SPARK_MASTER_PORT=7077
+SPARK_MASTER_WEBUI_PORT=8080
+# New configuration settings
+SPARK_CONF_spark_serializer=org.apache.spark.serializer.KryoSerializer
+SPARK_CONF_spark_kryoserializer_buffer_max=2000m
+SPARK_CONF_spark_driver_maxResultSize=2g
+SPARK_CONF_spark_rpc_message_maxSize=2000
+SPARK_CONF_spark_task_maxFailures=10
+SPARK_CONF_spark_executor_memory=4g
+SPARK_CONF_spark_driver_memory=6g
+# HDFS Configuration
+SPARK_CONF_spark_hadoop_fs_defaultFS=hdfs://hadoop-namenode:8020
+CLUSTER_NAME=cyberfuse-hadoop-cluster
+
+```
+By using Docker Compose, you can easily manage and scale the services required for your application. The configuration ensures that all components work together seamlessly, providing a robust environment for data processing and analysis.
 ## Docker Setup
 The project uses Docker Compose to set up the following services:
 - **spark-master**: The Spark master node.
@@ -186,62 +245,3 @@ The `check_spark_hdfs_connection` function checks the connection to HDFS by atte
 ### Sentinel Session
 The `start_eventhub_stream` function starts the Event Hub stream for a specified duration and processes the data.
 
-### Configuration Files
-
-#### `requirements.txt`
-Lists the Python dependencies for the project:
-```plaintext
-fastapi>=0.95.0
-uvicorn>=0.22.0
-pyspark==3.5.2
-requests
-urllib3
-python-dotenv
-delta-spark==3.2.0
-```
-
-
-#### `worker.env`
-Configuration for the Spark worker:
-```properties
-SPARK_MODE=worker
-SPARK_MASTER=spark://spark-master:7077
-SPARK_WORKER_CORES=3
-SPARK_WORKER_MEMORY=3G
-SPARK_WORKER_PORT=7078
-SPARK_WORKER_WEBUI_PORT=8081
-# New configuration settings
-SPARK_CONF_spark_serializer=org.apache.spark.serializer.KryoSerializer
-SPARK_CONF_spark_kryoserializer_buffer_max=2000m
-SPARK_CONF_spark_driver_maxResultSize=2g
-SPARK_CONF_spark_rpc_message_maxSize=2000
-SPARK_CONF_spark_task_maxFailures=10
-SPARK_CONF_spark_executor_memory=4g
-SPARK_CONF_spark_driver_memory=6g
-# cluser Node
-CLUSTER_NAME=cyberfuse-hadoop-cluster
-
-```
-
-#### `master.env`
-Configuration for the Spark master:
-
-```properties
-SPARK_MODE=master
-SPARK_MASTER_HOST=spark-master
-SPARK_MASTER_PORT=7077
-SPARK_MASTER_WEBUI_PORT=8080
-# New configuration settings
-SPARK_CONF_spark_serializer=org.apache.spark.serializer.KryoSerializer
-SPARK_CONF_spark_kryoserializer_buffer_max=2000m
-SPARK_CONF_spark_driver_maxResultSize=2g
-SPARK_CONF_spark_rpc_message_maxSize=2000
-SPARK_CONF_spark_task_maxFailures=10
-SPARK_CONF_spark_executor_memory=4g
-SPARK_CONF_spark_driver_memory=6g
-# HDFS Configuration
-SPARK_CONF_spark_hadoop_fs_defaultFS=hdfs://hadoop-namenode:8020
-CLUSTER_NAME=cyberfuse-hadoop-cluster
-
-```
-By using Docker Compose, you can easily manage and scale the services required for your application. The configuration ensures that all components work together seamlessly, providing a robust environment for data processing and analysis.
