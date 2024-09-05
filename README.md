@@ -21,9 +21,17 @@ The project uses Docker Compose to set up and manage the following services:
 - **Volumes**: Local directories are mounted into the containers to persist data and share configuration files. For example, the local `app` directory is mounted into the FastAPI container.
 - **Networks**: All services are connected to a custom Docker network to enable communication between them.
 
+## Table of Contents
+1. [Overviews](#overview)
+2. [Setup Instructions](#setup-instructions)
+3. [Environment Variables](#environment-variables)
+4. [Docker Setup](#docker-setup)
+5. [API Endpoints](#api-endpoints)
+6. [Services](#services)
+7. [Configuration Files](#configuration-files)
 
-
-## Overview (Spark)
+## Overview 
+### Spark
 Apache Spark is a unified analytics engine for large-scale data processing. It provides high-level APIs in Java, Scala, Python, and R, and an optimized engine that supports general execution graphs. Spark is known for its speed, ease of use, and sophisticated analytics.
 
 ### Spark Components
@@ -35,23 +43,17 @@ Apache Spark is a unified analytics engine for large-scale data processing. It p
 create a single SparkSession instance that can be used across your entire application, you can follow these steps:
 - **Create a Singleton Class for SparkSession:** This ensures that only one instance of SparkSession is created and shared across the application.
 - **Use the Singleton Class in Your Modules:** Import and use the singleton instance wherever needed.
-## Overview (MISP)
+### MISP
 This project is a FastAPI application integrated with PySpark and MISP (Malware Information Sharing Platform). It provides endpoints to interact with MISP data and Spark cluster information.
 
-## Overview (Syslog)
+### Syslog
 Syslog is a standard protocol used to send system log or event messages to a specific server, called a syslog server. It is primarily used for computer system management and security auditing. In this project, syslog data is ingested, processed, and stored in Delta tables using Spark.
 
-## Overview (Microsoft Sentinel with Event Hub)
+### Microsoft Sentinel with Event Hub
 Microsoft Sentinel is a scalable, cloud-native, security information event management (SIEM) and security orchestration automated response (SOAR) solution. It delivers intelligent security analytics and threat intelligence across the enterprise. In this project, Microsoft Sentinel data is ingested through Azure Event Hub, processed using Spark, and stored in Delta tables for further analysis.
 
 
-## Table of Contents
-1. [Setup Instructions](#setup-instructions)
-2. [Environment Variables](#environment-variables)
-3. [Docker Setup](#docker-setup)
-4. [API Endpoints](#api-endpoints)
-5. [Services](#services)
-6. [Configuration Files](#configuration-files)
+
 
 ## Setup Instructions
 
