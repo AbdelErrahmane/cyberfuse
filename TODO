@@ -1,69 +1,7 @@
-# Meeting Agenda
-agenda = [
-    "Presentation of project progress",
-    "Architectural design discussion",
-    "packaging and deployment",
-    "explication of the project",
-    "Discussion of project milestones",
-    "Validation of completed milestones",
-    "Planning for upcoming milestones",
-
-]
-
-# Print Meeting Agenda
-print("\n \t ***********\tMeeting Agenda:\t ***********\t")
-for item in agenda:
-    print("- " + item)
-
-# Validate Milestones
-milestones = {
-    "Understand the client's specific requirements for the Spark cluster and Docker setup.": True,
-    "Environment preparation for dev enverinment": True,
-    "Develop Pyspark Endpoints for MISP": True,
-    "Develop Pyspark Endpoints for Eventhub": True,
-    "Develop Pyspark Endpoints for Syslogs": True,
-    "Application Integration": True,
-    "Create documentation": True,  # Example of a milestone that is not validated
-    " another approach to our project we want to ask if this approach will be easier or not": False,  # Example of a milestone that is not validated
-    " And another question do you have LLM training experience ??": False,
-    "Any other business" : False,
-    "Next meeting date and time" : False,  # Example of a milestone that is not validated
-}
-
-# Additional Milestones doing by me for free
-additional_milestones = {
-    "Create docker-compose file": True,
-    "Create containers for each application": True,
-    "Write SQL query using Postman": True,  # Example of a milestone that is not validated
-    "Set up HDFS Namenode and Datanode": True,
-    "Implement additional functions for data manipulation": True,  # Example of a milestone that is not validated
-}
-
-# Print Milestone Validation
-# print("\nUpwork Milestone Validation:")
-# for milestone, validated in milestones.items():
-#     status = "Validated" if validated else "Not Validated"
-#     print("- " + milestone + ": " + status)
-
-# # Update Milestones
-# milestones.update(additional_milestones)
-
-# # Print Additional Milestones
-# print("\nAdditional Milestones added for free by me:")
-# for milestone, validated in additional_milestones.items():
-#     status = "Validated" if validated else "Not Validated"
-#     print("- " + milestone + ": " + status)
-
-
-
-# # Print Milestone Validation
-# print("\nAll Milestone Validation:")
-# for milestone, validated in milestones.items():
-#     status = "Validated" if validated else "Not Validated"
-#     print("- " + milestone + ": " + status)
-
-# Print TODO (Milestones that are not validated)
-print("\nTODO:")
-for milestone, validated in milestones.items():
-    if not validated:
-        print("- " + milestone)
+    Presentation of project progress
+    Architectural design discussion
+    packaging and deployment
+    explication of the project
+    Discussion of project milestones
+    Validation of completed milestones
+    Planning for upcoming milestones
